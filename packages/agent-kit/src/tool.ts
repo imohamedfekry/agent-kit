@@ -1,5 +1,5 @@
 import { type GetStepTools, type Inngest } from "inngest";
-import type { StandardSchemaV1, StandardJSONSchemaV1 } from "@standard-schema/spec";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { type Agent } from "./agent";
 import { type StateData } from "./state";
 import { type NetworkRun } from "./network";
@@ -77,7 +77,7 @@ export namespace Tool {
     step?: GetStepTools<Inngest.Any>;
   };
 
-  export type Input = StandardSchemaV1 & StandardJSONSchemaV1;
+  export type Input = StandardSchemaV1;
 
   export type Choice = "auto" | "any" | (string & {});
 }
@@ -99,7 +99,7 @@ export function createToolManifest<
   type Result = {
     [K in TTools[number] as K["name"] & string]: K extends Tool<
       string,
-      infer In extends StandardSchemaV1 & StandardJSONSchemaV1,
+      infer In extends StandardSchemaV1,
       infer Out
     >
       ? { input: StandardSchemaV1.InferOutput<In>; output: ToolResultPayload<Out> }
