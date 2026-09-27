@@ -1,6 +1,6 @@
 import { type Inngest, type InngestFunction, isInngestFunction } from "inngest";
 import { type AsyncContext, getAsyncCtx } from "inngest/experimental";
-import { type ZodType, ZodObject, z } from "zod";
+import { type ZodType, ZodObject, ZodType as ZodTypeValue, z } from "zod";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 export type MaybePromise<T> = T | Promise<T>;
@@ -129,20 +129,11 @@ const helpers = {
   },
 };
 
-type JSONSchemaTarget = "draft-07" | "draft-2020-12" | "openapi-3.0";
-
-const targetMapping: Record<string, JSONSchemaTarget> = {
-  "draft-7": "draft-07",
-  "draft-07": "draft-07",
-  "draft-2020-12": "draft-2020-12",
-  "openapi-3.0": "openapi-3.0",
-};
-
 export const toolParametersToJSONSchema = (
   schema: StandardSchemaV1 | ZodType,
   target: "draft-7" | "draft-2020-12" | "openapi-3.0"
 ): Record<string, unknown> => {
-  const mappedTarget = targetMapping[target] ?? target;
+  const mappedTarget = target === "draft-7" ? "draft-07" : target;
 
   if (typeof schema === "object" && schema !== null && "~standard" in schema) {
     const standardSchema = schema as StandardSchemaV1;
@@ -153,8 +144,8 @@ export const toolParametersToJSONSchema = (
     }
   }
 
-  if (typeof schema === "object" && schema !== null && "def" in schema) {
-    return z.toJSONSchema(schema as ZodType, { target });
+  if (schema instanceof ZodTypeValue) {
+    return z.toJSONSchema(schema, { target });
   }
 
   throw new Error(

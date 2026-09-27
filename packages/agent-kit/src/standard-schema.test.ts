@@ -41,6 +41,19 @@ describe("Standard Schema support", () => {
       expect(jsonSchema.properties).toHaveProperty("limit");
     });
 
+    test("Valibot schema converts to JSON Schema with draft-07 target", () => {
+      const schema = v.object({
+        query: v.pipe(v.string(), v.description("Search query")),
+      });
+
+      const standardSchema = toStandardJsonSchema(schema);
+      const jsonSchema = toolParametersToJSONSchema(standardSchema, "draft-7");
+
+      expect(jsonSchema).toHaveProperty("type", "object");
+      expect(jsonSchema).toHaveProperty("properties");
+      expect(jsonSchema.properties).toHaveProperty("query");
+    });
+
     test("Valibot schema validates input", async () => {
       const schema = v.object({
         query: v.pipe(v.string(), v.description("Search query")),
