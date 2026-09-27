@@ -12,9 +12,9 @@ describe("Standard Schema support", () => {
       const searchTool = createTool({
         name: "search",
         description: "Web search",
-        parameters: v.object({
+        parameters: toStandardJsonSchema(v.object({
           query: v.pipe(v.string(), v.description("Search query")),
-        }),
+        })),
         handler: async ({ query }) => {
           expect(typeof query).toBe("string");
           return { results: [] };
